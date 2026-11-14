@@ -1,0 +1,43 @@
+{
+  "job_name": "pokemon-pipeline",
+  "description": "Pokémon medallion architecture ETL pipeline",
+  "tasks": [
+    {
+      "task_name": "bronze_ingest",
+      "description": "Ingest raw CSV files to bronze layer",
+      "notebook_task": {
+        "notebook_path": "/Repos/pokemon-databricks/project-2-etl-pipeline/notebooks/02-bronze-validation"
+      }
+    },
+    {
+      "task_name": "silver_transform",
+      "description": "Clean and transform to silver layer",
+      "notebook_task": {
+        "notebook_path": "/Repos/pokemon-databricks/project-2-etl-pipeline/notebooks/02-silver-clean"
+      },
+      "depends_on": [
+        {
+          "task_key": "bronze_ingest"
+        }
+      ]
+    },
+    {
+      "task_name": "gold_aggregate",
+      "description": "Create gold layer aggregations",
+      "notebook_task": {
+        "notebook_path": "/Repos/pokemon-databricks/project-2-etl-pipeline/notebooks/02-gold-aggregations"
+      },
+      "depends_on": [
+        {
+          "task_key": "silver_transform"
+        }
+      ]
+    }
+  ],
+  "schedule": {
+    "quartz_cron_expression": "0 0 * * * ?",
+    "timezone_id": "UTC"
+  },
+  "timeout_seconds": 3600,
+  "max_concurrent_runs": 1
+}
